@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace MultiEchoLauncher.Models;
+namespace Launcher.Models;
 
 internal sealed class NapCatInstance(string name)
 {

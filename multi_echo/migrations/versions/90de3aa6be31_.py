@@ -1,8 +1,8 @@
 """empty message
 
-迁移 ID: 155a5385eedc
+迁移 ID: 90de3aa6be31
 父迁移: 
-创建时间: 2026-02-13 00:06:36.050586
+创建时间: 2026-02-13 12:06:21.298237
 
 """
 from __future__ import annotations
@@ -13,7 +13,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision: str = '155a5385eedc'
+revision: str = '90de3aa6be31'
 down_revision: str | Sequence[str] | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
@@ -58,9 +58,10 @@ def upgrade(name: str = "") -> None:
     )
     op.create_table('groups',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('bot_qq', sa.String(length=64), nullable=False, comment='Bot QQ账号'),
     sa.Column('platform_id', sa.String(length=64), nullable=False, comment='QQ群号'),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_groups')),
-    sa.UniqueConstraint('platform_id'),
+    sa.UniqueConstraint('bot_qq', 'platform_id', name='uq_group_bot_qq_platform_id'),
     info={'bind_key': 'multi_echo'}
     )
     # ### end Alembic commands ###

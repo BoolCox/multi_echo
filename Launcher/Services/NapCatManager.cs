@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using MultiEchoLauncher.Models;
+using Launcher.Models;
 
-namespace MultiEchoLauncher.Services;
+namespace Launcher.Services;
 
 internal sealed partial class NapCatManager(Job job)
 {

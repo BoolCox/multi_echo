@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using MultiEchoLauncher.Services;
+using Launcher.Services;
 
 Console.Title = "Multi Echo Launcher";
 

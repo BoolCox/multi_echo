@@ -2,9 +2,9 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace MultiEchoLauncher.Services;
+namespace Launcher.Services;
 
-internal sealed class Job : IDisposable
+internal sealed partial class Job : IDisposable
 {
     private const uint JOBOBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000;
 
@@ -40,14 +40,16 @@ internal sealed class Job : IDisposable
 
     public void Dispose() => _handle?.Dispose();
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-    private static extern SafeFileHandle CreateJobObject(IntPtr lpJobAttributes, string? lpName);
+    [LibraryImport("kernel32.dll", EntryPoint = "CreateJobObjectW", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial SafeFileHandle CreateJobObject(IntPtr lpJobAttributes, string? lpName);
 
-    [DllImport("kernel32.dll")]
-    private static extern bool SetInformationJobObject(SafeFileHandle hJob, int infoType, IntPtr lpJobObjectInfo, uint cbJobObjectInfoLength);
+    [LibraryImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetInformationJobObject(SafeFileHandle hJob, int infoType, IntPtr lpJobObjectInfo, uint cbJobObjectInfoLength);
 
-    [DllImport("kernel32.dll")]
-    private static extern bool AssignProcessToJobObject(SafeFileHandle job, IntPtr process);
+    [LibraryImport("kernel32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool AssignProcessToJobObject(SafeFileHandle job, IntPtr process);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct JOBOBJECT_BASIC_LIMIT_INFORMATION

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-namespace MultiEchoLauncher.Services;
+namespace Launcher.Services;
 
 internal sealed partial class NonebotManager(Job job)
 {
