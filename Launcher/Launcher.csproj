@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
+
+	<!-- 发布配置 -->
+	<PropertyGroup>
+		<PublishSingleFile>true</PublishSingleFile>
+		<PublishAot>true</PublishAot>
+		<SelfContained>true</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	</PropertyGroup>
+
+	<!-- 路径定义 -->
+	<PropertyGroup>
+		<RootDir>$(MSBuildProjectDirectory)\..\</RootDir>
+		<OutputDir>$(RootDir)build\</OutputDir>
+	</PropertyGroup>
+
+	<!-- 准备 build 目录 -->
+	<Target Name="PrepareBuildDir" AfterTargets="Publish">
+		<RemoveDir Directories="$(OutputDir)" />
+		<MakeDir Directories="$(OutputDir)" />
+	</Target>
+
+	<!-- 仅复制发布后的可执行文件到 build/ -->
+	<Target Name="CopyLauncherFiles" AfterTargets="Publish" DependsOnTargets="PrepareBuildDir">
+		<Copy SourceFiles="$(PublishDir)$(AssemblyName).exe" DestinationFolder="$(OutputDir)" SkipUnchangedFiles="true" />
+	</Target>
+
+	<!-- 复制 nonebot 到 build/nonebot -->
+	<Target Name="CopyNonebot" AfterTargets="Publish" DependsOnTargets="CopyLauncherFiles">
+		<Exec Command="robocopy &quot;$(RootDir)multi_echo&quot; &quot;$(OutputDir)nonebot&quot; /E /XD .venv __pycache__ .idea .jbeval .vscode data /XF multi_echo.db .env" IgnoreExitCode="true" />
+		<Copy SourceFiles="$(RootDir)README.md" DestinationFolder="$(OutputDir)" />
+	</Target>
+
+	<!-- 下载并解压 NapCat 到 build/napcat1 -->
+	<Target Name="DownloadNapCat" AfterTargets="Publish" DependsOnTargets="CopyNonebot">
+		<PropertyGroup>
+			<NapcatVersion>v4.16.0</NapcatVersion>
+			<NapcatUrl>https://github.com/NapNeko/NapCatQQ/releases/download/$(NapcatVersion)/NapCat.Shell.zip</NapcatUrl>
+			<NapcatZip>$(OutputDir)NapCat.zip</NapcatZip>
+			<NapcatExtractDir>$(OutputDir)napcat1</NapcatExtractDir>
+		</PropertyGroup>
+		<Exec Command='powershell -Command "Invoke-WebRequest -Uri $(NapcatUrl) -OutFile &quot;$(NapcatZip)&quot;"' />
+		<Exec Command='powershell -Command "Expand-Archive -Path &quot;$(NapcatZip)&quot; -DestinationPath &quot;$(NapcatExtractDir)&quot; -Force"' />
+		<Delete Files="$(NapcatZip)" />
+	</Target>
+</Project>
