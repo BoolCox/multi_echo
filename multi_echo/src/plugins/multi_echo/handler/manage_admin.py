@@ -1,6 +1,7 @@
+from arclet.alconna import Alconna, Args
 from arclet.alconna import CommandMeta
 from nonebot.adapters.onebot.v11 import Message, Bot
-from nonebot_plugin_alconna import on_alconna, Alconna, Args, Match
+from nonebot_plugin_alconna import on_alconna, Match
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -30,7 +31,7 @@ async def handler_add_admin(
         qq: Match[str]
 ):
     try:
-        admin = _valid_qq(Message(qq.result))
+        admin = _valid_qq(Message(str(qq.result)))
     except ValueError:
         await add_admin.finish("QQ号不合法")
         return
@@ -52,9 +53,9 @@ async def handler_del_admin(
         qq: Match[str]
 ):
     try:
-        admin = _valid_qq(Message(qq.result))
+        admin = _valid_qq(Message(str(qq.result)))
     except ValueError:
-        await add_admin.finish("QQ号不合法")
+        await del_admin.finish("QQ号不合法")
         return
 
     try:

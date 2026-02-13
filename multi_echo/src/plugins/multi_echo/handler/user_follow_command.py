@@ -1,6 +1,5 @@
-from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
-from nonebot.params import CommandArg
+from nonebot_plugin_alconna import on_alconna, Alconna, Args, Match
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -9,19 +8,31 @@ from .permission import ADMIN_OR_SUPER_ADMIN
 from .utils import _valid_qq
 from ..model.follow import Follow
 
-follow_user = on_command("跟随", permission=ADMIN_OR_SUPER_ADMIN, priority=5, block=True)
-unfollow_user = on_command("取消跟随", permission=ADMIN_OR_SUPER_ADMIN, priority=5, block=True)
+follow_user = on_alconna(
+    Alconna("跟随", Args["qq?", str]),
+    response_self=True,
+    permission=ADMIN_OR_SUPER_ADMIN,
+    priority=5,
+    block=True
+)
+unfollow_user = on_alconna(
+    Alconna("取消跟随", Args["qq?", str]),
+    response_self=True,
+    permission=ADMIN_OR_SUPER_ADMIN,
+    priority=5,
+    block=True
+)
 
 
 @follow_user.handle()
 async def handler_follow_user(
         event: GroupMessageEvent,
         session: async_scoped_session,
-        args: Message = CommandArg()
+        qq: Match[str]
 ):
     try:
         bot_id = str(event.self_id)
-        user_id = _valid_qq(args)
+        user_id = _valid_qq(Message(str(qq.result)))
     except ValueError:
         await follow_user.finish("QQ号不合法")
         return
@@ -39,11 +50,11 @@ async def handler_follow_user(
 async def handler_unfollow_user(
         event: GroupMessageEvent,
         session: async_scoped_session,
-        args: Message = CommandArg()
+        qq: Match[str]
 ):
     try:
         bot_id = str(event.self_id)
-        user_id = _valid_qq(args)
+        user_id = _valid_qq(Message(str(qq.result)))
     except ValueError:
         await follow_user.finish("QQ号不合法")
         return
