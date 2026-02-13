@@ -1,11 +1,7 @@
-from nonebot import on_command
-from nonebot.rule import to_me
 from nonebot_plugin_orm import async_scoped_session
 
-from .permission import ADMIN_OR_SUPER_ADMIN
 from ..model.follow_switch import FollowSwitch
-
-follow_switch = on_command("切换跟随总开关", rule=to_me(), permission=ADMIN_OR_SUPER_ADMIN, block=True)
+from ..command import follow_switch
 
 
 @follow_switch.handle()

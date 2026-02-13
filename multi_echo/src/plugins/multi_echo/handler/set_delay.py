@@ -1,14 +1,10 @@
-from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 from nonebot.params import CommandArg
-from nonebot.rule import to_me
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 
-from .permission import ADMIN_OR_SUPER_ADMIN
 from ..model.delay import Delay
-
-set_delay = on_command("设置跟随延迟", rule=to_me(), permission=ADMIN_OR_SUPER_ADMIN, block=True)
+from ..command import set_delay
 
 
 @set_delay.handle()

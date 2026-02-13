@@ -1,27 +1,12 @@
-from arclet.alconna import Alconna, Args
-from arclet.alconna import CommandMeta
-from nonebot.adapters.onebot.v11 import Message, Bot
-from nonebot_plugin_alconna import on_alconna, Match
+from nonebot.adapters.onebot.v11 import Bot
+from nonebot_plugin_alconna import Match
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-from .permission import SUPER_ADMIN
 from .utils import _valid_qq
+from ..command import add_admin, del_admin
 from ..model.admin import Admin
-
-add_admin = on_alconna(
-    Alconna("添加主人", Args["qq?", str], meta=CommandMeta(compact=True)),
-    response_self=True,
-    permission=SUPER_ADMIN,
-    block=True
-)
-del_admin = on_alconna(
-    Alconna("删除主人", Args["qq?", str], meta=CommandMeta(compact=True)),
-    response_self=True,
-    permission=SUPER_ADMIN,
-    block=True
-)
 
 
 @add_admin.handle()
@@ -31,7 +16,7 @@ async def handler_add_admin(
         qq: Match[str]
 ):
     try:
-        admin = _valid_qq(Message(str(qq.result)))
+        admin = _valid_qq(str(qq.result))
     except ValueError:
         await add_admin.finish("QQ号不合法")
         return
@@ -53,7 +38,7 @@ async def handler_del_admin(
         qq: Match[str]
 ):
     try:
-        admin = _valid_qq(Message(str(qq.result)))
+        admin = _valid_qq(str(qq.result))
     except ValueError:
         await del_admin.finish("QQ号不合法")
         return
