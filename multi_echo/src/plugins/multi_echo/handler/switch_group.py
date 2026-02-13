@@ -1,32 +1,18 @@
-from arclet.alconna import CommandMeta
-from nonebot.adapters.onebot.v11 import Message, Bot
-from nonebot_plugin_alconna import on_alconna, Alconna, Args, Match
+from nonebot.adapters.onebot.v11 import Bot
+from nonebot_plugin_alconna import Match
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-from .permission import ADMIN_OR_SUPER_ADMIN
 from .utils import _valid_qq
+from ..command import add_group, del_group
 from ..model.group import Group
-
-add_group = on_alconna(
-    Alconna("添加群", Args["qq?", str], meta=CommandMeta(compact=True)),
-    response_self=True,
-    permission=ADMIN_OR_SUPER_ADMIN,
-    block=True
-)
-del_group = on_alconna(
-    Alconna("删除群", Args["qq?", str], meta=CommandMeta(compact=True)),
-    response_self=True,
-    permission=ADMIN_OR_SUPER_ADMIN,
-    block=True
-)
 
 
 @add_group.handle()
 async def handler_add_group(bot: Bot, session: async_scoped_session, qq: Match[str]):
     try:
-        group = _valid_qq(Message(str(qq.result)))
+        group = _valid_qq(str(qq.result))
     except ValueError:
         await add_group.finish("群号不合法")
         return
@@ -44,7 +30,7 @@ async def handler_add_group(bot: Bot, session: async_scoped_session, qq: Match[s
 @del_group.handle()
 async def handler_del_group(bot: Bot, session: async_scoped_session, qq: Match[str]):
     try:
-        group = _valid_qq(Message(str(qq.result)))
+        group = _valid_qq(str(qq.result))
     except ValueError:
         await del_group.finish("群号不合法")
         return

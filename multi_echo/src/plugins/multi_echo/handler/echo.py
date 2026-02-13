@@ -1,15 +1,15 @@
-from nonebot import on_message
 import asyncio
+
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 
+from ..command import echo
+from ..model.delay import Delay
 from ..model.follow import Follow
 from ..model.follow_switch import FollowSwitch
 from ..model.group import Group
-from ..model.delay import Delay
 
-echo = on_message(priority=20)
 
 
 async def is_group_registered(event: GroupMessageEvent, session: async_scoped_session) -> bool:

@@ -1,17 +1,12 @@
-from nonebot import on_command, get_bots
+from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
-from nonebot.rule import to_me
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 
-from .permission import ADMIN_OR_SUPER_ADMIN
 from ..model.follow import Follow
 from ..model.follow_switch import FollowSwitch
 from ..model.group import Group
-
-view_status = on_command("查看状态", rule=to_me(), aliases={"查看跟随状态"}, permission=ADMIN_OR_SUPER_ADMIN,
-                         block=True)
-view_whitelist_group = on_command("查看当前添加群", rule=to_me(), permission=ADMIN_OR_SUPER_ADMIN, block=True)
+from ..command import view_status, view_whitelist_group
 
 
 @view_status.handle()
@@ -23,18 +18,16 @@ async def handler_view_status(event: GroupMessageEvent, session: async_scoped_se
     total = len(follows)
 
     if not follows:
-        detail = "无"
+        detail_lines = ["无"]
     else:
         follow_map: dict[str, list[str]] = {}
         for item in follows:
             follow_map.setdefault(item.bot_id, []).append(item.user_id)
 
-        parts: list[str] = []
+        detail_lines = []
         for bot_id, user_ids in follow_map.items():
             user_list = "，".join(sorted(set(user_ids)))
-            parts.append(f"{bot_id}: {user_list}")
-
-        detail = "；".join(parts)
+            detail_lines.append(f"- {bot_id}: {user_list}")
 
     # 计算本群是否启用跟随（总开关开启 且 本群在白名单中）
     total_switch = await session.get(FollowSwitch, 1)
@@ -46,13 +39,15 @@ async def handler_view_status(event: GroupMessageEvent, session: async_scoped_se
         )
     )
     in_whitelist = bool(res.scalar_one_or_none())
-    group_status = "开启跟随" if (total_enabled and in_whitelist) else "关闭跟随"
+    group_status = "可用" if (total_enabled and in_whitelist) else "不可用"
 
     await view_status.finish(
-        f"当前在线账号数：{num}\n"
-        f"账号跟随详情：{detail}\n"
-        f"跟随规则总数：{total}\n"
-        f"本群已{group_status}"
+        "当前状态\n"
+        f"- 当前在线账号数：{num}\n"
+        f"- 跟随规则总数：{total}\n"
+        f"- 本群跟随{group_status}\n"
+        "账号跟随详情：\n"
+        + "\n".join(detail_lines)
     )
 
 
@@ -61,6 +56,18 @@ async def handler_view_whitelist_group(session: async_scoped_session):
     result = await session.execute(select(Group).order_by(Group.platform_id))
     obj = result.scalars().all()
 
-    group = "；".join(str(item.platform_id) for item in obj)
+    group_map = {}
+    for item in obj:
+        group_map.setdefault(str(item.platform_id), []).append(str(item.bot_qq))
 
-    await view_whitelist_group.finish(f"当前添加群：{group}")
+    if not group_map:
+        output = "当前未添加任何群"
+    else:
+        lines = []
+        for group_id in sorted(group_map.keys()):
+            bot_list = group_map[group_id]
+            bots = ", ".join(sorted(set(bot_list)))
+            lines.append(f"{group_id} -> {bots}")
+        output = "群白名单（群号 -> 允许的机器人账号）：\n" + "\n".join(lines)
+
+    await view_whitelist_group.finish(output)
