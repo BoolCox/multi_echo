@@ -11,7 +11,6 @@ from ..model.follow_switch import FollowSwitch
 from ..model.group import Group
 
 
-
 async def is_group_registered(event: GroupMessageEvent, session: async_scoped_session) -> bool:
     group = event.group_id
     result = await session.execute(
@@ -56,8 +55,12 @@ async def handler_echo(event: GroupMessageEvent, session: async_scoped_session):
         return
 
     # 从数据库读取当前机器人的延迟
-    stmt = select(Delay).where(Delay.bot_qq == bot_id)
-    res = await session.execute(stmt)
+    res = await session.execute(
+        select(Delay)
+        .where(
+            Delay.bot_qq == bot_id
+        )
+    )
     delay_obj = res.scalar_one_or_none()
     delay_ms = delay_obj.delay if delay_obj else 0
     if delay_ms and delay_ms > 0:

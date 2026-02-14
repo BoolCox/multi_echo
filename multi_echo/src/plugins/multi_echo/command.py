@@ -83,4 +83,3 @@ set_delay = on_command(
 
 # 核心功能
 echo = on_message(priority=20)
-
