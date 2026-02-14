@@ -49,10 +49,11 @@ graph LR
 ```
 
 > **Launcher 的职责：**
-> 1. 扫描所有 `napcat*` 文件夹，将第 2 个及之后的实例的 `config` 目录符号链接到第 1 个实例，实现配置共享。
-> 2. 检查 NoneBot 虚拟环境，若不存在则自动执行 `uv sync` 安装依赖。
-> 3. 启动 NoneBot2 进程和所有 NapCat 实例，并监控运行状态。
-> 4. 自动捕获 NapCat 的 WebUI 地址并在浏览器中打开，方便登录。
+> 1. 构建时自动生成 NapCat 的 `onebot11.json` 网络配置文件，无需手动配置。
+> 2. 扫描所有 `napcat*` 文件夹，将第 2 个及之后的实例的 `config` 目录符号链接到第 1 个实例，实现配置共享。
+> 3. 检查 NoneBot 虚拟环境，若不存在则自动执行 `uv sync` 安装依赖。
+> 4. 启动 NoneBot2 进程和所有 NapCat 实例，并监控运行状态。
+> 5. 自动捕获 NapCat 的 WebUI 地址并在浏览器中打开，方便登录。
 
 ---
 
@@ -105,18 +106,10 @@ MultiEcho/
 如需同时登录多个账号：
 
 1. 复制安装目录中任意一个 `napcat` 文件夹，重命名为 `napcat2`（或 `napcat3`、`napcat10` 等）。
-2. 为每个 `napcatX` 实例分别进行登录与网络配置。
+2. 重新启动 `Launcher.exe`，程序会自动将新实例的 `config` 目录符号链接到第 1 个实例，共享网络配置。
 3. ⚠️ **不要**在"系统配置 → 登录配置"里设置快速登录，以避免所有实例登录同一个账号。
 
-### 5. 首次登录的网络配置
-
-每个账号首次登录时，在网页左侧进行如下操作：
-
-1. 进入 **网络配置** → **新建** → **WebSocket 客户端**。
-2. 填入地址：`ws://localhost:8080/onebot/v11/ws`
-3. 勾选 **启用**，并勾选 **上报自身消息** → 点击 **保存**。
-
-### 6. 账号风控与重登
+### 5. 账号风控与重登
 
 如果账号被风控需要重新登录：
 
@@ -143,7 +136,7 @@ cd MultiEcho
 dotnet publish Launcher/Launcher.csproj -c Release
 ```
 
-`dotnet publish` 会自动完成 AOT 编译并组装 `build/` 目录（Launcher + NoneBot 插件 + NapCat 下载解压），构建完成后将 `build/` 目录整体分发即可使用。
+`dotnet publish` 会自动完成 AOT 编译并组装 `build/` 目录（Launcher + NoneBot 插件 + NapCat 下载解压 + 网络配置生成），构建完成后将 `build/` 目录整体分发即可使用。
 
 ### 开发 NoneBot 插件
 

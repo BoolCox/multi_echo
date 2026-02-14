@@ -52,4 +52,41 @@
 		<Exec Command='powershell -Command "Expand-Archive -Path &quot;$(NapcatZip)&quot; -DestinationPath &quot;$(NapcatExtractDir)&quot; -Force"' />
 		<Delete Files="$(NapcatZip)" />
 	</Target>
+
+	<!-- 在 NapCat 的 config 目录中创建 onebot11.json 配置文件 -->
+	<Target Name="CreateNapCatConfig" AfterTargets="Publish" DependsOnTargets="DownloadNapCat">
+		<PropertyGroup>
+			<NapcatConfigDir>$(OutputDir)napcat1\config\</NapcatConfigDir>
+			<Onebot11Json>
+{
+  "network": {
+    "httpServers": [],
+    "httpSseServers": [],
+    "httpClients": [],
+    "websocketServers": [],
+    "websocketClients": [
+      {
+        "enable": true,
+        "name": "MultiEcho",
+        "url": "ws://localhost:8080/onebot/v11/ws",
+        "reportSelfMessage": true,
+        "messagePostFormat": "array",
+        "token": ".gJodsBWEwHaaKc0",
+        "debug": false,
+        "heartInterval": 30000,
+        "reconnectInterval": 5000
+      }
+    ],
+    "plugins": []
+  },
+  "musicSignUrl": "",
+  "enableLocalFile2Url": false,
+  "parseMultMsg": false,
+  "imageDownloadProxy": ""
+}
+			</Onebot11Json>
+		</PropertyGroup>
+		<MakeDir Directories="$(NapcatConfigDir)" />
+		<WriteLinesToFile File="$(NapcatConfigDir)onebot11.json" Lines="$(Onebot11Json)" Overwrite="true" />
+	</Target>
 </Project>
