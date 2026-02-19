@@ -49,11 +49,9 @@ graph LR
 ```
 
 > **Launcher 的职责：**
-> 1. 构建时自动生成 NapCat 的 `onebot11.json` 网络配置文件，无需手动配置。
-> 2. 扫描所有 `napcat*` 文件夹，将第 2 个及之后的实例的 `config` 目录符号链接到第 1 个实例，实现配置共享。
-> 3. 检查 NoneBot 虚拟环境，若不存在则自动执行 `uv sync` 安装依赖。
-> 4. 启动 NoneBot2 进程和所有 NapCat 实例，并监控运行状态。
-> 5. 自动捕获 NapCat 的 WebUI 地址并在浏览器中打开，方便登录。
+> 1. 配置 `nonebot` 和所有 `napcat*` 。
+> 2. 启动并管理 NoneBot 进程和所有 NapCat 实例、监控运行状态。
+> 3. 自动z NapCat 的 WebUI 地址并在浏览器中打开，方便登录。
 
 ---
 
@@ -61,15 +59,15 @@ graph LR
 
 ```
 MultiEcho/
-├── Launcher/               # .NET 10 启动器（AOT 单文件发布）
+├── Launcher/               # 启动器
 │   ├── Launcher.slnx
 │   ├── Launcher.csproj
 │   └── app.manifest
-├── multi_echo/             # NoneBot2 插件（Python）
+├── multi_echo/             # NoneBot2 插件
 │   ├── pyproject.toml
 │   ├── src/plugins/        # 插件源码
 │   └── docs/               # 使用说明
-├── build/                  # 构建产物输出（自动生成）
+├── build/                  # 构建产物输出
 └── README.md
 ```
 
@@ -106,7 +104,7 @@ MultiEcho/
 如需同时登录多个账号：
 
 1. 复制安装目录中任意一个 `napcat` 文件夹，重命名为 `napcat2`（或 `napcat3`、`napcat10` 等）。
-2. 重新启动 `Launcher.exe`，程序会自动将新实例的 `config` 目录符号链接到第 1 个实例，共享网络配置。
+2. 重新启动 `Launcher.exe`，程序会自动配置新的 `napcat*` 。
 3. ⚠️ **不要**在"系统配置 → 登录配置"里设置快速登录，以避免所有实例登录同一个账号。
 
 ### 5. 账号风控与重登
