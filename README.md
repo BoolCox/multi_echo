@@ -83,8 +83,8 @@ MultiEcho/
 ### 2. 安装依赖 & 配置
 
 1. 安装 [uv](https://github.com/astral-sh/uv)（Python 包管理器）。
-2. 将 `nonebot/.env.example` 重命名为 `nonebot/.env`。
-3. 打开 `nonebot/.env`，将 `SUPERUSER` 设置为你的 QQ 号：
+2. 将 `nonebot/.env.multi_echo.example` 重命名为 `nonebot/.env.multi_echo`。
+3. 打开 `nonebot/.env.multi_echo`，将 `SUPERUSER` 设置为你的 QQ 号：
 
    ```
    SUPERUSER="123456789"

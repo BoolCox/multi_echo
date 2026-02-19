@@ -10,7 +10,7 @@ __pycache__/
 venv/
 
 # 环境变量
-.env
+/multi_echo/.env.multi_echo
 
 # 本地数据库
 *.db
