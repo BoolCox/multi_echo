@@ -11,6 +11,7 @@ venv/
 
 # 环境变量
 /multi_echo/.env.multi_echo
+/multi_echo/.env.multi_echo_candy
 
 # 本地数据库
 *.db
