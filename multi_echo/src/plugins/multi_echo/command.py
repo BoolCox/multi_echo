@@ -1,4 +1,4 @@
-from arclet.alconna import Alconna, Args, CommandMeta
+from arclet.alconna import Alconna, Args, CommandMeta, MultiVar,Arg
 from nonebot import on_command, on_message
 from nonebot.rule import to_me
 from nonebot_plugin_alconna import on_alconna
@@ -35,16 +35,63 @@ del_group = on_alconna(
     block=True
 )
 
-# 3. 跟随管理
-follow_user = on_alconna(
-    Alconna("跟随", Args["qq?", str], meta=CommandMeta(compact=True)),
+
+# 3 商品管理
+set_goods = on_alconna(
+    Alconna(
+        "设置压车数",
+        Arg("goods_list", MultiVar(str),seps="/"),
+        meta=CommandMeta(compact=True),
+    ),
+    skip_for_unmatch=False,
     response_self=True,
     permission=ADMIN_OR_SUPER_ADMIN,
     block=True
 )
 
-unfollow_user = on_alconna(
-    Alconna("取消跟随", Args["qq?", str], meta=CommandMeta(compact=True)),
+del_goods = on_alconna(
+    Alconna(
+        "删除压车数",
+        Arg("goods_list", MultiVar(str),seps="/"),
+        meta=CommandMeta(compact=True),
+    ),
+    skip_for_unmatch=False,
+    response_self=True,
+    permission=ADMIN_OR_SUPER_ADMIN,
+    block=True
+)
+
+set_onepack_goods = on_alconna(
+    Alconna(
+        "设置一包杀压车数",
+        Arg("goods_list", MultiVar(str),seps="/"),
+        meta=CommandMeta(compact=True),
+    ),
+    skip_for_unmatch=False,
+    response_self=True,
+    permission=ADMIN_OR_SUPER_ADMIN,
+    block=True
+)
+
+del_onepack_goods = on_alconna(
+    Alconna(
+        "删除一包杀压车数",
+        Arg("goods_list", MultiVar(str),seps="/"),
+        meta=CommandMeta(compact=True)
+    ),
+    skip_for_unmatch=False,
+    response_self=True,
+    permission=ADMIN_OR_SUPER_ADMIN,
+    block=True
+)
+
+set_min_price = on_alconna(
+    Alconna(
+        "设置下限",
+        Args["min_price", int],
+        meta=CommandMeta(compact=True)
+    ),
+    skip_for_unmatch=False,
     response_self=True,
     permission=ADMIN_OR_SUPER_ADMIN,
     block=True

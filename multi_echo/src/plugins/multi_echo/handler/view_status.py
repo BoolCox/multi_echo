@@ -3,7 +3,6 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 
-from ..model.follow import Follow
 from ..model.total_switch import TotalSwitch
 from ..model.group import Group
 from ..command import view_status, view_whitelist_group
@@ -12,22 +11,6 @@ from ..command import view_status, view_whitelist_group
 @view_status.handle()
 async def handler_view_status(event: GroupMessageEvent, session: async_scoped_session):
     num = len(get_bots())
-
-    result = await session.execute(select(Follow))
-    follows = result.scalars().all()
-    total = len(follows)
-
-    if not follows:
-        detail_lines = ["无"]
-    else:
-        follow_map: dict[str, list[str]] = {}
-        for item in follows:
-            follow_map.setdefault(item.bot_id, []).append(item.user_id)
-
-        detail_lines = []
-        for bot_id, user_ids in follow_map.items():
-            user_list = "，".join(sorted(set(user_ids)))
-            detail_lines.append(f"- {bot_id}: {user_list}")
 
     # 计算本群是否启用跟随（总开关开启 且 本群在白名单中）
     total_switch = await session.get(TotalSwitch, 1)
@@ -44,10 +27,7 @@ async def handler_view_status(event: GroupMessageEvent, session: async_scoped_se
     await view_status.finish(
         "当前状态\n"
         f"- 当前在线账号数：{num}\n"
-        f"- 跟随规则总数：{total}\n"
-        f"- 本群跟随{group_status}\n"
-        "账号跟随详情：\n"
-        + "\n".join(detail_lines)
+        f"- 本群{group_status}\n"
     )
 
 
