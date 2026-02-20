@@ -3,5 +3,6 @@ from . import (
     delay,
     follow,
     follow_switch,
-    group
+    group,
+    goods,
 )
