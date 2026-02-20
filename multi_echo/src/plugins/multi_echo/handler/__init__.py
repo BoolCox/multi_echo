@@ -1,9 +1,9 @@
 from . import (
     control_switch,
     echo,
+    goods_manage,
     manage_admin,
     set_delay,
-    switch_group,
-    user_follow,
-    view_staus,
+    group_manage,
+    view_status,
 )

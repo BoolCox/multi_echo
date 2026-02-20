@@ -2,7 +2,7 @@ from . import (
     admin,
     delay,
     follow,
-    follow_switch,
+    total_switch,
     group,
     goods,
 )

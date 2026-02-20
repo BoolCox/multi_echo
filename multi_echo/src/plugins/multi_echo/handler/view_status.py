@@ -4,7 +4,7 @@ from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 
 from ..model.follow import Follow
-from ..model.follow_switch import FollowSwitch
+from ..model.total_switch import TotalSwitch
 from ..model.group import Group
 from ..command import view_status, view_whitelist_group
 
@@ -30,7 +30,7 @@ async def handler_view_status(event: GroupMessageEvent, session: async_scoped_se
             detail_lines.append(f"- {bot_id}: {user_list}")
 
     # 计算本群是否启用跟随（总开关开启 且 本群在白名单中）
-    total_switch = await session.get(FollowSwitch, 1)
+    total_switch = await session.get(TotalSwitch, 1)
     total_enabled = bool(total_switch and total_switch.enabled)
     res = await session.execute(
         select(Group).where(

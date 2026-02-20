@@ -3,8 +3,8 @@ from sqlalchemy import Boolean, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 
-class FollowSwitch(Model):
-    """跟随功能总开关表"""
+class TotalSwitch(Model):
+    """总开关表"""
     __tablename__ = "follow_switches"
     id: Mapped[int] = mapped_column(primary_key=True)
     enabled: Mapped[bool] = mapped_column(Boolean, nullable=False)

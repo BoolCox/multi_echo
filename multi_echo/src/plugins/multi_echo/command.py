@@ -51,8 +51,8 @@ unfollow_user = on_alconna(
 )
 
 # 4. 开关与状态（需 @机器人）
-follow_switch = on_command(
-    "切换跟随总开关",
+total_switch = on_command(
+    "切换总开关",
     rule=to_me(),
     permission=ADMIN_OR_SUPER_ADMIN,
     block=True
@@ -75,7 +75,7 @@ view_whitelist_group = on_command(
 
 # 5. 延迟设置（需 @机器人）
 set_delay = on_command(
-    "设置跟随延迟",
+    "设置延迟",
     rule=to_me(),
     permission=ADMIN_OR_SUPER_ADMIN,
     block=True
