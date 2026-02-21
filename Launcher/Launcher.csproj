@@ -37,7 +37,7 @@
 
 	<!-- 复制 nonebot 到 build/nonebot -->
 	<Target Name="CopyNonebot" AfterTargets="Publish" DependsOnTargets="CopyLauncherFiles">
-		<Exec Command="robocopy &quot;$(RootDir)multi_echo&quot; &quot;$(OutputDir)nonebot&quot; /E /XD .venv __pycache__ .idea .jbeval .vscode data /XF multi_echo.db .env" IgnoreExitCode="true" />
+		<Exec Command="robocopy &quot;$(RootDir)multi_echo&quot; &quot;$(OutputDir)nonebot&quot; /E /XD .venv __pycache__ .idea .jbeval .vscode data /XF multi_echo.db .env.multi_echo .env.multi_echo_candy" IgnoreExitCode="true" />
 		<Copy SourceFiles="$(RootDir)README.md" DestinationFolder="$(OutputDir)" />
 	</Target>
 

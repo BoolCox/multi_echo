@@ -1,8 +1,8 @@
 """empty message
 
-迁移 ID: 90de3aa6be31
+迁移 ID: a0c2b2b1214e
 父迁移: 
-创建时间: 2026-02-13 12:06:21.298237
+创建时间: 2026-02-21 11:39:10.121143
 
 """
 from __future__ import annotations
@@ -13,7 +13,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision: str = '90de3aa6be31'
+revision: str = 'a0c2b2b1214e'
 down_revision: str | Sequence[str] | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
