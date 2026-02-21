@@ -69,7 +69,7 @@
       {
         "enable": true,
         "name": "MultiEcho",
-        "url": "ws://localhost:8080/onebot/v11/ws",
+        "url": "ws://localhost:8081/onebot/v11/ws",
         "reportSelfMessage": true,
         "messagePostFormat": "array",
         "token": ".gJodsBWEwHaaKc0",
