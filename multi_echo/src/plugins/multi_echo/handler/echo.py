@@ -13,16 +13,44 @@ from ..model.group import Group
 
 
 async def is_group_registered(event: GroupMessageEvent, session: async_scoped_session) -> bool:
-    group = event.group_id
     result = await session.execute(
         select(Group)
         .where(
             Group.bot_qq == str(event.self_id),
-            Group.platform_id == group
+            Group.platform_id == event.group_id,
         )
     )
-    obj = result.scalar_one_or_none()
-    return bool(obj)
+    return result.scalar_one_or_none() is not None
+
+
+def _normalize_code(raw: str) -> str:
+    compact = "".join(part.strip() for part in raw.split("-") if part.strip())
+    if not compact:
+        return ""
+    return "".join(sorted(compact))
+
+
+async def _find_goods_by_code(
+    event: GroupMessageEvent,
+    session: async_scoped_session,
+    is_onepack: bool,
+    normalized_code: str,
+) -> Goods | None:
+    result = await session.execute(
+        select(Goods)
+        .where(
+            Goods.bot_qq == str(event.self_id),
+            Goods.is_onepack == is_onepack,
+        )
+    )
+    return next(
+        (
+            item
+            for item in result.scalars().all()
+            if _normalize_code(item.code) == normalized_code
+        ),
+        None,
+    )
 
 
 @echo.handle()
@@ -44,20 +72,18 @@ async def handler_echo(event: GroupMessageEvent, session: async_scoped_session):
         # 这里不再校验商品编码的格式，允许非数字的代号
 
         # 校验费用
-        result = await session.execute(
-            select(Goods)
-            .where(
-                Goods.bot_qq == str(event.self_id),
-                Goods.code == code,
-                Goods.is_onepack == is_onepack
-            )
-        )
-        goods = result.scalar_one_or_none()
+        normalized_code = _normalize_code(code)
+        if not normalized_code:
+            return
+        goods = await _find_goods_by_code(event, session, is_onepack, normalized_code)
         if goods is None:
             return
-        if fee < goods.min_price or fee > goods.max_price:
+        if fee < goods.min_price:
             return
-        reply_fee = fee
+        if fee > goods.max_price:
+            reply_fee = goods.max_price
+        else:
+            reply_fee = fee
 
     # 从数据库读取当前机器人的延迟
     bot_id = event.self_id

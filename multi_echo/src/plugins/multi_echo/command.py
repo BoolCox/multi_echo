@@ -1,4 +1,4 @@
-from arclet.alconna import Alconna, Args, CommandMeta, MultiVar,Arg
+from arclet.alconna import Alconna, Args, CommandMeta, MultiVar, Arg
 from nonebot import on_command, on_message
 from nonebot.rule import to_me
 from nonebot_plugin_alconna import on_alconna
@@ -35,12 +35,11 @@ del_group = on_alconna(
     block=True
 )
 
-
 # 3 商品管理
 set_goods = on_alconna(
     Alconna(
         "设置压车数",
-        Arg("goods_list", MultiVar(str),seps="/"),
+        Arg("goods_list", MultiVar(str), seps="/"),
         meta=CommandMeta(compact=True),
     ),
     skip_for_unmatch=False,
@@ -52,7 +51,7 @@ set_goods = on_alconna(
 del_goods = on_alconna(
     Alconna(
         "删除压车数",
-        Arg("goods_list", MultiVar(str),seps="/"),
+        Arg("goods_list", MultiVar(str), seps="/"),
         meta=CommandMeta(compact=True),
     ),
     skip_for_unmatch=False,
@@ -64,7 +63,7 @@ del_goods = on_alconna(
 set_onepack_goods = on_alconna(
     Alconna(
         "设置一包杀压车数",
-        Arg("goods_list", MultiVar(str),seps="/"),
+        Arg("goods_list", MultiVar(str), seps="/"),
         meta=CommandMeta(compact=True),
     ),
     skip_for_unmatch=False,
@@ -76,7 +75,7 @@ set_onepack_goods = on_alconna(
 del_onepack_goods = on_alconna(
     Alconna(
         "删除一包杀压车数",
-        Arg("goods_list", MultiVar(str),seps="/"),
+        Arg("goods_list", MultiVar(str), seps="/"),
         meta=CommandMeta(compact=True)
     ),
     skip_for_unmatch=False,
@@ -97,10 +96,17 @@ set_min_price = on_alconna(
     block=True
 )
 
+del_goods_all = on_alconna(
+    Alconna("清空商品"),
+    skip_for_unmatch=False,
+    response_self=True,
+    permission=ADMIN_OR_SUPER_ADMIN,
+    block=True
+)
+
 # 4. 开关与状态（需 @机器人）
 total_switch = on_command(
     "切换总开关",
-    rule=to_me(),
     permission=ADMIN_OR_SUPER_ADMIN,
     block=True
 )

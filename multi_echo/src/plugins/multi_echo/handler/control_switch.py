@@ -1,14 +1,19 @@
+from nonebot import get_bot
+from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot_plugin_orm import async_scoped_session
 
-from ..model.total_switch import TotalSwitch
 from ..command import total_switch
+from ..model.total_switch import TotalSwitch
 
 
 @total_switch.handle()
-async def handler_total_switch(session: async_scoped_session):
+async def handler_total_switch(bot: Bot, session: async_scoped_session):
     """处理总开关的命令"""
-    obj = await session.get(TotalSwitch, 1)
+    frist_bot = get_bot()
+    if bot.self_id != frist_bot.self_id:
+        return
 
+    obj = await session.get(TotalSwitch, 1)
     if obj is None:
         obj = TotalSwitch(id=1, enabled=True)
         session.add(obj)
