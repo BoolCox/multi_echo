@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Launcher.Services;
 
-Console.Title = "Multi Echo Launcher";
+Console.Title = "Multi Echo Candy Launcher";
 
 using var job = new Job();
 var napcat = new NapCatManager(job);

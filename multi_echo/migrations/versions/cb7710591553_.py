@@ -1,8 +1,8 @@
 """empty message
 
-迁移 ID: fe9c0e5d48f3
+迁移 ID: cb7710591553
 父迁移: 
-创建时间: 2026-02-20 20:10:27.239403
+创建时间: 2026-02-21 10:41:55.478491
 
 """
 from __future__ import annotations
@@ -13,7 +13,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision: str = 'fe9c0e5d48f3'
+revision: str = 'cb7710591553'
 down_revision: str | Sequence[str] | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
