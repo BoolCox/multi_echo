@@ -2,21 +2,22 @@ import asyncio
 import re
 
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 
 from ..command import echo
 from ..model.delay import Delay
-from ..model.total_switch import TotalSwitch
 from ..model.goods import Goods
 from ..model.group import Group
+from ..model.total_switch import TotalSwitch
 
 
-async def is_group_registered(event: GroupMessageEvent, session: async_scoped_session) -> bool:
+async def is_group_registered(bot: Bot, event: GroupMessageEvent, session: async_scoped_session) -> bool:
     result = await session.execute(
         select(Group)
         .where(
-            Group.bot_qq == str(event.self_id),
+            Group.bot_qq == bot.self_id,
             Group.platform_id == event.group_id,
         )
     )
@@ -31,10 +32,10 @@ def _normalize_code(raw: str) -> str:
 
 
 async def _find_goods_by_code(
-    event: GroupMessageEvent,
-    session: async_scoped_session,
-    is_onepack: bool,
-    normalized_code: str,
+        event: GroupMessageEvent,
+        session: async_scoped_session,
+        is_onepack: bool,
+        normalized_code: str,
 ) -> Goods | None:
     result = await session.execute(
         select(Goods)
@@ -54,10 +55,10 @@ async def _find_goods_by_code(
 
 
 @echo.handle()
-async def handler_echo(event: GroupMessageEvent, session: async_scoped_session):
+async def handler_echo(bot: Bot, event: GroupMessageEvent, session: async_scoped_session):
     # 总开关和白名单校验
     result = await session.get(TotalSwitch, 1)
-    if result is None or not result.enabled or not await is_group_registered(event, session):
+    if result is None or not result.enabled or not await is_group_registered(bot, event, session):
         return
 
     message_text = event.get_message().extract_plain_text().strip()
@@ -85,12 +86,12 @@ async def handler_echo(event: GroupMessageEvent, session: async_scoped_session):
         else:
             reply_fee = fee
 
-    # 从数据库读取当前机器人的延迟
-    bot_id = event.self_id
+    # 从数据库读取延迟
     res = await session.execute(
         select(Delay)
         .where(
-            Delay.bot_qq == bot_id
+            Delay.group_id == str(event.group_id),
+            Delay.bot_qq == bot.self_id
         )
     )
     delay_obj = res.scalar_one_or_none()

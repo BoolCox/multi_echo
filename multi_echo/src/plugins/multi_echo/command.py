@@ -126,10 +126,8 @@ view_whitelist_group = on_command(
     block=True
 )
 
-# 5. 延迟设置（需 @机器人）
 set_delay = on_command(
-    "设置延迟",
-    rule=to_me(),
+    "设置群延迟",
     permission=ADMIN_OR_SUPER_ADMIN,
     block=True
 )

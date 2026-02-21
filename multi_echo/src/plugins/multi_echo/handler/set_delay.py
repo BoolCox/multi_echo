@@ -10,22 +10,30 @@ from ..command import set_delay
 @set_delay.handle()
 async def handler_set_delay(event: GroupMessageEvent, session: async_scoped_session, args: Message = CommandArg()):
     arg = args.extract_plain_text().strip()
-    if not arg.isdigit():
-        await set_delay.finish("请输入0~30000之间的整数（毫秒）")
-    delay = int(arg)
+    lines = arg.split("#")
+    if len(lines) != 2:
+        await set_delay.finish("请输入正确格式：<群号>#<延迟毫秒>")
+    group_id, delay_line = lines
+    group_id = group_id.strip()
+    delay_str = delay_line.strip()
+    if not group_id.isdigit():
+        await set_delay.finish("群号必须为数字")
+    if not delay_str.isdigit():
+        await set_delay.finish("延迟必须为0~30000之间的整数（毫秒）")
+    delay = int(delay_str)
     if not (0 <= delay <= 30000):
         await set_delay.finish("延迟必须在0~30000毫秒之间")
 
     bot_id = str(event.self_id)
 
     # 查询现有记录
-    res = await session.execute(select(Delay).where(Delay.bot_qq == bot_id))
+    res = await session.execute(select(Delay).where(Delay.bot_qq == bot_id, Delay.group_id == group_id))
     obj = res.scalar_one_or_none()
     if obj:
         obj.delay = delay
     else:
-        obj = Delay(bot_qq=bot_id, delay=delay)
+        obj = Delay(bot_qq=bot_id, group_id=group_id, delay=delay)
         session.add(obj)
 
     await session.commit()
-    await set_delay.finish(f"已将本账号的跟随延迟设置为 {delay} 毫秒")
+    await set_delay.finish(f"已将该群的回复延迟设置为 {delay} 毫秒")

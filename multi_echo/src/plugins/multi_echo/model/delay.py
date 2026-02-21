@@ -7,5 +7,6 @@ class Delay(Model):
 
     id = Column(Integer, primary_key=True)
 
-    bot_qq = Column(String, unique=True, index=True)
+    bot_qq = Column(String, index=True)
+    group_id = Column(String)
     delay = Column(Integer, default=0)
