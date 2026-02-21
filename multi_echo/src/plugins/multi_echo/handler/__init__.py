@@ -1,4 +1,5 @@
 from . import (
+    block_user,
     control_switch,
     echo,
     goods_manage,

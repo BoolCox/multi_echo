@@ -1,15 +1,15 @@
-from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
-from nonebot.params import CommandArg
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot_plugin_alconna import Match
 from nonebot_plugin_orm import async_scoped_session
 from sqlalchemy import select
 
-from ..model.delay import Delay
 from ..command import set_delay
+from ..model.delay import Delay
 
 
 @set_delay.handle()
-async def handler_set_delay(event: GroupMessageEvent, session: async_scoped_session, args: Message = CommandArg()):
-    arg = args.extract_plain_text().strip()
+async def handler_set_delay(bot: Bot, session: async_scoped_session, args: Match[str]):
+    arg = str(args.result).strip()
     lines = arg.split("#")
     if len(lines) != 2:
         await set_delay.finish("请输入正确格式：<群号>#<延迟毫秒>")
@@ -24,8 +24,7 @@ async def handler_set_delay(event: GroupMessageEvent, session: async_scoped_sess
     if not (0 <= delay <= 30000):
         await set_delay.finish("延迟必须在0~30000毫秒之间")
 
-    bot_id = str(event.self_id)
-
+    bot_id = bot.self_id
     # 查询现有记录
     res = await session.execute(select(Delay).where(Delay.bot_qq == bot_id, Delay.group_id == group_id))
     obj = res.scalar_one_or_none()

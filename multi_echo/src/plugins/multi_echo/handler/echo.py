@@ -11,6 +11,7 @@ from ..model.delay import Delay
 from ..model.goods import Goods
 from ..model.group import Group
 from ..model.total_switch import TotalSwitch
+from ..model.blocked_user import BlockedUser
 
 
 async def is_group_registered(bot: Bot, event: GroupMessageEvent, session: async_scoped_session) -> bool:
@@ -59,6 +60,16 @@ async def handler_echo(bot: Bot, event: GroupMessageEvent, session: async_scoped
     # 总开关和白名单校验
     result = await session.get(TotalSwitch, 1)
     if result is None or not result.enabled or not await is_group_registered(bot, event, session):
+        return
+
+    # 检查是否为被屏蔽用户
+    blocked_res = await session.execute(
+        select(BlockedUser).where(
+            BlockedUser.bot_qq == bot.self_id,
+            BlockedUser.user_qq == event.get_user_id(),
+        )
+    )
+    if blocked_res.scalar_one_or_none() is not None:
         return
 
     message_text = event.get_message().extract_plain_text().strip()

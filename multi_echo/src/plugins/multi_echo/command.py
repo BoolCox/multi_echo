@@ -35,6 +35,21 @@ del_group = on_alconna(
     block=True
 )
 
+add_blocked_user = on_alconna(
+    Alconna("添加屏蔽人", Args["qq?", str], meta=CommandMeta(compact=True)),
+    response_self=True,
+    permission=SUPER_ADMIN,
+    block=True
+)
+
+del_blocked_user = on_alconna(
+    Alconna("删除屏蔽人", Args["qq?", str], meta=CommandMeta(compact=True)),
+    response_self=True,
+    permission=SUPER_ADMIN,
+    block=True
+)
+
+
 # 3 商品管理
 set_goods = on_alconna(
     Alconna(
@@ -126,8 +141,9 @@ view_whitelist_group = on_command(
     block=True
 )
 
-set_delay = on_command(
-    "设置群延迟",
+set_delay = on_alconna(
+    Alconna("设置群延迟", Args["args?", str], meta=CommandMeta(compact=True)),
+    response_self=True,
     permission=ADMIN_OR_SUPER_ADMIN,
     block=True
 )
