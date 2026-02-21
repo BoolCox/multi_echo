@@ -24,10 +24,10 @@ async def is_group_registered(event: GroupMessageEvent, session: async_scoped_se
 
 
 def _normalize_code(raw: str) -> str:
-    compact = "".join(part.strip() for part in raw.split("-") if part.strip())
-    if not compact:
+    code = raw.strip()
+    if not code:
         return ""
-    return "".join(sorted(compact))
+    return "".join(sorted(code))
 
 
 async def _find_goods_by_code(
