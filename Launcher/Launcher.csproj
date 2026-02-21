@@ -8,6 +8,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<ApplicationIcon>app.ico</ApplicationIcon>
+		<Version>1.1.0</Version>
 	</PropertyGroup>
 
 	<!-- 发布配置 -->
@@ -59,35 +60,48 @@
 		<PropertyGroup>
 			<NapcatConfigDir>$(OutputDir)napcat1\config\</NapcatConfigDir>
 			<Onebot11Json>
-{
-  "network": {
-    "httpServers": [],
-    "httpSseServers": [],
-    "httpClients": [],
-    "websocketServers": [],
-    "websocketClients": [
-      {
-        "enable": true,
-        "name": "MultiEcho",
-        "url": "ws://localhost:8082/onebot/v11/ws",
-        "reportSelfMessage": true,
-        "messagePostFormat": "array",
-        "token": ".gJodsBWEwHaaKc0",
-        "debug": false,
-        "heartInterval": 30000,
-        "reconnectInterval": 5000
-      }
-    ],
-    "plugins": []
-  },
-  "musicSignUrl": "",
-  "enableLocalFile2Url": false,
-  "parseMultMsg": false,
-  "imageDownloadProxy": ""
-}
+				{
+				"network": {
+				"httpServers": [],
+				"httpSseServers": [],
+				"httpClients": [],
+				"websocketServers": [],
+				"websocketClients": [
+				{
+				"enable": true,
+				"name": "MultiEcho",
+				"url": "ws://localhost:8082/onebot/v11/ws",
+				"reportSelfMessage": true,
+				"messagePostFormat": "array",
+				"token": ".gJodsBWEwHaaKc0",
+				"debug": false,
+				"heartInterval": 30000,
+				"reconnectInterval": 5000
+				}
+				],
+				"plugins": []
+				},
+				"musicSignUrl": "",
+				"enableLocalFile2Url": false,
+				"parseMultMsg": false,
+				"imageDownloadProxy": ""
+				}
 			</Onebot11Json>
 		</PropertyGroup>
 		<MakeDir Directories="$(NapcatConfigDir)" />
 		<WriteLinesToFile File="$(NapcatConfigDir)onebot11.json" Lines="$(Onebot11Json)" Overwrite="true" />
+	</Target>
+
+	<!-- 压缩 build 目录并打开文件夹 -->
+	<Target Name="ZipAndOpen" AfterTargets="CreateNapCatConfig">
+		<PropertyGroup>
+			<ZipVersion Condition="'$(Version)' != ''">$(Version)</ZipVersion>
+			<ZipFileName>$(AssemblyName)-Candy-$(ZipVersion)-$(RuntimeIdentifier).zip</ZipFileName>
+			<ZipFilePath>$(OutputDir)$(ZipFileName)</ZipFilePath>
+		</PropertyGroup>
+		<Message Text="Creating zip: $(ZipFilePath)" Importance="high" />
+		<Exec Command='powershell -NoProfile -Command "Compress-Archive -Path &quot;$(OutputDir)*&quot; -DestinationPath &quot;$(ZipFilePath)&quot; -Force"' IgnoreExitCode="false" />
+		<Message Text="Opening folder: $(OutputDir)" Importance="high" />
+		<Exec Command='explorer &quot;$(OutputDir)&quot;' IgnoreExitCode="true" />
 	</Target>
 </Project>
